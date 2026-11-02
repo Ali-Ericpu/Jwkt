@@ -1,0 +1,4 @@
+com.rainccup.jwkt.spring.JwktAutoConfiguration
+com.rainccup.jwkt.spring.JwktTemplateAutoConfiguration
+com.rainccup.jwkt.spring.JwktJackson2AutoConfiguration
+com.rainccup.jwkt.spring.JwktJackson3AutoConfiguration

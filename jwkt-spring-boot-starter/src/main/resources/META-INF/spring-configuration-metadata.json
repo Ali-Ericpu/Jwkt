@@ -1,0 +1,102 @@
+{
+  "groups": [
+    {
+      "name": "jwkt",
+      "type": "com.rainccup.jwkt.spring.JwktProperties",
+      "sourceType": "com.rainccup.jwkt.spring.JwktProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwkt.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether JWKT auto-configuration is enabled.",
+      "defaultValue": true
+    },
+    {
+      "name": "jwkt.algorithm",
+      "type": "java.lang.String",
+      "description": "JWS algorithm name, such as HS256, RS256 or ES256.",
+      "defaultValue": "HS256"
+    },
+    {
+      "name": "jwkt.issuer",
+      "type": "java.lang.String",
+      "description": "Default iss claim and, for the parser, the required issuer."
+    },
+    {
+      "name": "jwkt.audience",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Default aud claims and, for the parser, required audiences."
+    },
+    {
+      "name": "jwkt.key-id",
+      "type": "java.lang.String",
+      "description": "Default kid header value."
+    },
+    {
+      "name": "jwkt.secret",
+      "type": "java.lang.String",
+      "description": "Raw UTF-8 HMAC secret. Mutually exclusive with secret-base64 and PEM keys."
+    },
+    {
+      "name": "jwkt.secret-base64",
+      "type": "java.lang.String",
+      "description": "Base64 or base64url encoded HMAC secret. Mutually exclusive with secret and PEM keys."
+    },
+    {
+      "name": "jwkt.private-key",
+      "type": "org.springframework.core.io.Resource",
+      "description": "PKCS#8 private key resource (PEM) used for signing."
+    },
+    {
+      "name": "jwkt.public-key",
+      "type": "org.springframework.core.io.Resource",
+      "description": "X.509 public key resource (PEM) used for verification."
+    },
+    {
+      "name": "jwkt.key-algorithm",
+      "type": "java.lang.String",
+      "description": "JCA key algorithm for PEM keys when it cannot be inferred (RSA, EC, Ed25519, ...)."
+    },
+    {
+      "name": "jwkt.clock-skew",
+      "type": "java.time.Duration",
+      "description": "Allowed clock skew when validating exp and nbf.",
+      "defaultValue": "0s"
+    },
+    {
+      "name": "jwkt.expires-in",
+      "type": "java.time.Duration",
+      "description": "Default lifetime applied to newly issued tokens.",
+      "defaultValue": "15m"
+    },
+    {
+      "name": "jwkt.include-issued-at",
+      "type": "java.lang.Boolean",
+      "description": "Whether newly issued tokens receive an iat claim.",
+      "defaultValue": true
+    },
+    {
+      "name": "jwkt.require-expiration",
+      "type": "java.lang.Boolean",
+      "description": "Whether parsing rejects tokens without an exp claim.",
+      "defaultValue": true
+    },
+    {
+      "name": "jwkt.headers",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "Additional protected header values applied to newly issued tokens."
+    },
+    {
+      "name": "jwkt.claims",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "Additional claims applied to newly issued tokens."
+    },
+    {
+      "name": "jwkt.required-claims",
+      "type": "java.util.Set<java.lang.String>",
+      "description": "Claim names that must be present during parsing."
+    }
+  ]
+}
