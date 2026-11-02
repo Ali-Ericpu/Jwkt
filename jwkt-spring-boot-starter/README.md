@@ -4,7 +4,7 @@ Spring Boot auto-configuration for JWKT, supporting **Spring Boot 3.5.x** and **
 
 It registers JWKT's `JwtParser`, `JwktSigner`, and `JwktTemplate` as Spring beans and loads HMAC, RSA, or EC keys from `jwkt.*` properties. The starter has no hard JSON dependency: when Jackson 2 (Boot 3) or Jackson 3 (Boot 4) is on the classpath, the matching `JsonCodec` is auto-configured; an application-provided codec always wins.
 
-- **Coordinates:** `com.rainccup:jwkt-spring-boot-starter:0.1.0`
+- **Coordinates:** `com.rainccup.jwkt:jwkt-spring-boot-starter:0.1.0`
 - **Package:** `com.rainccup.jwkt.spring`
 - **Java:** 17+
 - **Boot baseline:** compiled against Boot 3.5.16 and tested independently on Boot 4.1.2
@@ -23,7 +23,7 @@ Then add the starter:
 
 ```kotlin
 dependencies {
-    implementation("com.rainccup:jwkt-spring-boot-starter:0.1.0")
+    implementation("com.rainccup.jwkt:jwkt-spring-boot-starter:0.1.0")
     // Usually already present in a web application.
     implementation("org.springframework.boot:spring-boot-starter-web")
 }

@@ -44,7 +44,7 @@ JWKT 有意保持轻量，不支持：
 
 ```kotlin
 dependencies {
-    implementation("com.rainccup:jwkt:0.1.0")
+    implementation("com.rainccup.jwkt:jwkt:0.1.0")
 }
 ```
 
@@ -56,7 +56,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("com.rainccup:jwkt-spring-boot-starter:0.1.0")
+    implementation("com.rainccup.jwkt:jwkt-spring-boot-starter:0.1.0")
 }
 ```
 

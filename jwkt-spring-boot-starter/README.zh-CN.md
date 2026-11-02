@@ -4,7 +4,7 @@ JWKT 的 Spring Boot 自动配置模块，支持 **Spring Boot 3.5.x** 与 **Spr
 
 它把 JWKT 的 `JwtParser`、`JwktSigner` 和 `JwktTemplate` 注册为 Spring Bean，并根据 `jwkt.*` 配置加载 HMAC、RSA 或 EC 密钥。starter 本身不依赖任何 JSON 框架；如果 classpath 中存在 Jackson 2（Boot 3）或 Jackson 3（Boot 4），会自动注册对应的 `JsonCodec`，也可以完全使用自定义 codec。
 
-- **坐标**：`com.rainccup:jwkt-spring-boot-starter:0.1.0`
+- **坐标**：`com.rainccup.jwkt:jwkt-spring-boot-starter:0.1.0`
 - **包名**：`com.rainccup.jwkt.spring`
 - **Java**：17+
 - **Boot 基线**：编译于 Boot 3.5.16，并在 Boot 4.1.2 上通过独立测试
@@ -21,7 +21,7 @@ JWKT 的 Spring Boot 自动配置模块，支持 **Spring Boot 3.5.x** 与 **Spr
 
 ```kotlin
 dependencies {
-    implementation("com.rainccup:jwkt-spring-boot-starter:0.1.0")
+    implementation("com.rainccup.jwkt:jwkt-spring-boot-starter:0.1.0")
     // 已经是 Web 应用时通常不需要再显式引入
     implementation("org.springframework.boot:spring-boot-starter-web")
 }

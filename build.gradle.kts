@@ -8,7 +8,7 @@ plugins {
     signing
 }
 
-group = "com.rainccup"
+group = "com.rainccup.jwkt"
 version = providers.gradleProperty("version").getOrElse("0.1.0")
 
 repositories {

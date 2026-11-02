@@ -38,7 +38,7 @@ JWKT intentionally stays small and does **not** support:
 
 ```kotlin
 dependencies {
-    implementation("com.rainccup:jwkt:0.1.0")
+    implementation("com.rainccup.jwkt:jwkt:0.1.0")
 }
 ```
 
@@ -54,7 +54,7 @@ The `jwkt-spring-boot-starter` module provides auto-configuration for Spring Boo
 
 ```kotlin
 dependencies {
-    implementation("com.rainccup:jwkt-spring-boot-starter:0.1.0")
+    implementation("com.rainccup.jwkt:jwkt-spring-boot-starter:0.1.0")
 }
 ```
 

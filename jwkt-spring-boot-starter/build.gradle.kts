@@ -8,7 +8,7 @@ plugins {
     signing
 }
 
-group = "com.rainccup"
+group = "com.rainccup.jwkt"
 version = rootProject.version
 
 repositories {
