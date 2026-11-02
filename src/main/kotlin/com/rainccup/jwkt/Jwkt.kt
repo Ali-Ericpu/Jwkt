@@ -11,7 +11,7 @@ package com.rainccup.jwkt
  *
  * val token = Jwkt.builder(codec)
  *     .subject("user-42")
- *     .expiresIn(Duration.ofMinutes(15))
+ *     .expiresIn(15.minutes)
  *     .signWith(JwsAlgorithms.HS256, secret)
  *     .compact()
  *

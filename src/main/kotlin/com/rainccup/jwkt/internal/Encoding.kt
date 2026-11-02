@@ -1,7 +1,6 @@
 package com.rainccup.jwkt.internal
 
 import com.rainccup.jwkt.JwtException
-import java.nio.charset.CharacterCodingException
 import kotlin.io.encoding.Base64
 
 internal object Encoding {

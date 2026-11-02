@@ -61,14 +61,14 @@
     },
     {
       "name": "jwkt.clock-skew",
-      "type": "java.time.Duration",
-      "description": "Allowed clock skew when validating exp and nbf.",
+      "type": "java.lang.String",
+      "description": "Allowed clock skew when validating exp and nbf, as a Kotlin duration such as '30s' or 'PT30S'.",
       "defaultValue": "0s"
     },
     {
       "name": "jwkt.expires-in",
-      "type": "java.time.Duration",
-      "description": "Default lifetime applied to newly issued tokens.",
+      "type": "java.lang.String",
+      "description": "Default lifetime applied to newly issued tokens, as a Kotlin duration such as '15m' or 'PT15M'.",
       "defaultValue": "15m"
     },
     {

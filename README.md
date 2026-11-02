@@ -110,8 +110,8 @@ class JacksonJsonCodec(
 ```kotlin
 import com.rainccup.jwkt.Jwkt
 import com.rainccup.jwkt.JwsAlgorithms
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 
 val codec = JacksonJsonCodec()
 val secret = ByteArray(32) { (it + 1).toByte() } // HS256 requires at least 32 bytes
@@ -121,8 +121,8 @@ val token = Jwkt.builder(codec)
     .subject("user-42")
     .audience("api")
     .jwtId("token-001")
-    .issuedAt(Instant.now())
-    .expiresIn(Duration.ofMinutes(15))
+    .issuedAt(Clock.System.now())
+    .expiresIn(15.minutes)
     .keyId("key-2026-01")
     .claim("role", "admin")
     .claim("tenant", "acme")
@@ -137,7 +137,7 @@ val token = Jwkt.builder(codec)
 ```kotlin
 import com.rainccup.jwkt.Jwkt
 import com.rainccup.jwkt.JwsAlgorithms
-import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 val parser = Jwkt.parser(codec)
     .verifyWith(JwsAlgorithms.HS256, secret)
@@ -145,7 +145,7 @@ val parser = Jwkt.parser(codec)
     .requireAudience("api")
     .requireClaim("tenant", "acme")
     .requireExpiration()
-    .clockSkew(Duration.ofSeconds(30))
+    .clockSkew(30.seconds)
     .maxTokenLength(16 * 1024)
     .build()
 
@@ -249,10 +249,13 @@ The resolver receives an unverified header, so never trust its fields blindly. J
 ## Expiration and Clocks
 
 ```kotlin
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+
 val parser = Jwkt.parser(codec)
     .verifyWith(JwsAlgorithms.HS256, secret)
-    .clock(Clock.systemUTC())          // default
-    .clockSkew(Duration.ofSeconds(30)) // allow 30 seconds of skew
+    .clock(Clock.System)          // default
+    .clockSkew(30.seconds)        // allow 30 seconds of skew
     .build()
 ```
 

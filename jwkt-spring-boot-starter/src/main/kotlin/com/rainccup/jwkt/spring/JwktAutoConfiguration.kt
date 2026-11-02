@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Conditional
-import java.time.Clock
+import kotlin.time.Clock
 
 /**
  * Core auto-configuration for JWKT.
@@ -39,7 +39,7 @@ public class JwktAutoConfiguration {
     /** Provides a UTC clock unless the application defines one. */
     @Bean
     @ConditionalOnMissingBean(Clock::class)
-    public fun jwktClock(): Clock = Clock.systemUTC()
+    public fun jwktClock(): Clock = Clock.System
 
     /** Resolves the configured built-in algorithm unless a custom bean is present. */
     @Bean
@@ -123,7 +123,7 @@ public class JwktAutoConfiguration {
     }
 
     private fun validateParsing(properties: JwktProperties) {
-        if (properties.clockSkew.isNegative) {
+        if (properties.clockSkew.isNegative()) {
             throw JwtException.ConfigurationException("jwkt.clock-skew must not be negative")
         }
         if (properties.issuer?.isBlank() == true) {

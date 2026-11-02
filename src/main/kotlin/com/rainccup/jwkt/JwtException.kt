@@ -1,6 +1,6 @@
 package com.rainccup.jwkt
 
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * Base class for every failure raised by JWKT.

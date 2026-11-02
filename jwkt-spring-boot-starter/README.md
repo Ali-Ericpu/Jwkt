@@ -92,7 +92,7 @@ class TokenService(
 | A verification key (secret or public key) | `JwtParser` |
 | A signing key (secret or private key) | `JwktSigner` |
 | Parser and signer both present | `JwktTemplate` |
-| No application `Clock` | `Clock.systemUTC()` |
+| No application `Clock` | `Clock.System` |
 | No application `JwsAlgorithm` | Built-in algorithm selected by `jwkt.algorithm` |
 | Jackson 2 on classpath and no `JsonCodec` | `Jackson2JsonCodec` |
 | Jackson 3 on classpath and no `JsonCodec` | `Jackson3JsonCodec` |

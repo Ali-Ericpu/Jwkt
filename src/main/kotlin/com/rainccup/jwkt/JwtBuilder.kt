@@ -9,9 +9,9 @@ import com.rainccup.jwkt.internal.CLAIM_NOT_BEFORE
 import com.rainccup.jwkt.internal.CLAIM_SUBJECT
 import com.rainccup.jwkt.internal.Encoding
 import com.rainccup.jwkt.internal.isNumericDateClaim
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 /**
  * Fluent builder for a signed JWT.
@@ -22,7 +22,7 @@ import java.time.Instant
  * ```kotlin
  * val token = Jwkt.builder(codec)
  *     .subject("user-42")
- *     .expiresIn(Duration.ofMinutes(15))
+ *     .expiresIn(15.minutes)
  *     .signWith(JwsAlgorithms.HS256, secret)
  *     .compact()
  * ```
@@ -32,7 +32,7 @@ import java.time.Instant
 public class JwtBuilder internal constructor() {
 
     private var codec: JsonCodec? = null
-    private var clock: Clock = Clock.systemUTC()
+    private var clock: Clock = Clock.System
     private var signingAlgorithm: JwsAlgorithm? = null
     private var signingKey: Any? = null
     private val headerValues: MutableMap<String, Any?> = LinkedHashMap()
@@ -137,22 +137,22 @@ public class JwtBuilder internal constructor() {
 
     /** Sets the `iat` claim. Sub-second precision is truncated to whole seconds. */
     public fun issuedAt(instant: Instant): JwtBuilder = apply {
-        claimValues[CLAIM_ISSUED_AT] = instant.epochSecond
+        claimValues[CLAIM_ISSUED_AT] = instant.epochSeconds
     }
 
     /** Sets the `nbf` claim. Sub-second precision is truncated to whole seconds. */
     public fun notBefore(instant: Instant): JwtBuilder = apply {
-        claimValues[CLAIM_NOT_BEFORE] = instant.epochSecond
+        claimValues[CLAIM_NOT_BEFORE] = instant.epochSeconds
     }
 
     /** Sets the `exp` claim. Sub-second precision is truncated to whole seconds. */
     public fun expiresAt(instant: Instant): JwtBuilder = apply {
-        claimValues[CLAIM_EXPIRATION] = instant.epochSecond
+        claimValues[CLAIM_EXPIRATION] = instant.epochSeconds
     }
 
     /** Sets `exp` to [clock]'s current instant plus [duration]. */
     public fun expiresIn(duration: Duration): JwtBuilder =
-        expiresAt(clock.instant().plus(duration))
+        expiresAt(clock.now().plus(duration))
 
     /**
      * Adds or replaces a claim.
@@ -237,7 +237,7 @@ public class JwtBuilder internal constructor() {
         value ?: throw JwtException.ConfigurationException(message())
 
     private fun normalizeClaim(name: String, value: Any?): Any? {
-        return if (isNumericDateClaim(name) && value is Instant) value.epochSecond else value
+        return if (isNumericDateClaim(name) && value is Instant) value.epochSeconds else value
     }
 
     private fun encode(codec: JsonCodec, value: Any?, partName: String): String {

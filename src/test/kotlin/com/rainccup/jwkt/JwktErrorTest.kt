@@ -9,6 +9,7 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.spec.ECGenParameterSpec
 import java.util.Base64
+import kotlin.time.Duration.Companion.seconds
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -251,7 +252,7 @@ class JwktErrorTest {
     @Test
     fun `rejects numeric dates outside the Instant range`() {
         assertThrows(JwtException.InvalidClaims::class.java) {
-            parser.parse(token(payloadJson = """{"exp":9223372036854775807}"""))
+            parser.parse(token(payloadJson = """{"exp":9223372036854775808}"""))
         }
     }
 
@@ -368,7 +369,7 @@ class JwktErrorTest {
             Jwkt.builder(codec).header("crit", listOf("exp"))
         }
         assertThrows(IllegalArgumentException::class.java) {
-            Jwkt.parser(codec).clockSkew(java.time.Duration.ofSeconds(-1))
+            Jwkt.parser(codec).clockSkew((-1).seconds)
         }
     }
 

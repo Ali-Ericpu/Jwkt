@@ -5,7 +5,7 @@ import com.rainccup.jwkt.JwsAlgorithm
 import com.rainccup.jwkt.JwtBuilder
 import com.rainccup.jwkt.Jwkt
 import com.rainccup.jwkt.spring.internal.JwktDefaults
-import java.time.Clock
+import kotlin.time.Clock
 
 /**
  * Thread-safe factory for JWTs signed with a fixed algorithm and key.
@@ -36,7 +36,7 @@ internal constructor(
         codec: JsonCodec,
         algorithm: JwsAlgorithm,
         key: Any,
-        clock: Clock = Clock.systemUTC(),
+        clock: Clock = Clock.System,
     ) : this(codec, algorithm, key, clock, JwktDefaults.empty())
 
     private val algorithm: JwsAlgorithm = algorithm
@@ -55,7 +55,7 @@ internal constructor(
         }
         defaults.keyId?.let(builder::keyId)
         if (defaults.includeIssuedAt) {
-            builder.issuedAt(clock.instant())
+            builder.issuedAt(clock.now())
         }
         defaults.expiresIn?.let(builder::expiresIn)
         // Explicitly configured headers and claims win over computed defaults.

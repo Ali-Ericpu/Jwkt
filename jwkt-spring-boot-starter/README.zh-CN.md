@@ -90,7 +90,7 @@ class TokenService(
 | 可验签的 key（secret 或 public-key） | `JwtParser` |
 | 可签发的 key（secret 或 private-key） | `JwktSigner` |
 | 同时有 parser 和 signer | `JwktTemplate` |
-| 未定义 `Clock` | `Clock.systemUTC()` |
+| 未定义 `Clock` | `Clock.System` |
 | 未定义 `JwsAlgorithm` | 按 `jwkt.algorithm` 解析内置算法 |
 | classpath 有 Jackson 2 且无 `JsonCodec` | `Jackson2JsonCodec` |
 | classpath 有 Jackson 3 且无 `JsonCodec` | `Jackson3JsonCodec` |

@@ -8,7 +8,7 @@ import com.rainccup.jwkt.internal.CLAIM_JWT_ID
 import com.rainccup.jwkt.internal.CLAIM_NOT_BEFORE
 import com.rainccup.jwkt.internal.CLAIM_SUBJECT
 import com.rainccup.jwkt.internal.numericDate
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * The decoded JWT payload.

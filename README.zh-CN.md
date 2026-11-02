@@ -112,7 +112,8 @@ class JacksonJsonCodec(
 ```kotlin
 import com.rainccup.jwkt.Jwkt
 import com.rainccup.jwkt.JwsAlgorithms
-import java.time.Duration
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 
 val codec = JacksonJsonCodec()
 val secret = ByteArray(32) { (it + 1).toByte() } // HS256 至少 32 字节
@@ -122,8 +123,8 @@ val token = Jwkt.builder(codec)
     .subject("user-42")
     .audience("api")
     .jwtId("token-001")
-    .issuedAt(Instant.now())
-    .expiresIn(Duration.ofMinutes(15))
+    .issuedAt(Clock.System.now())
+    .expiresIn(15.minutes)
     .keyId("key-2026-01")
     .claim("role", "admin")
     .claim("tenant", "acme")
@@ -138,14 +139,14 @@ val token = Jwkt.builder(codec)
 ```kotlin
 import com.rainccup.jwkt.Jwkt
 import com.rainccup.jwkt.JwsAlgorithms
-import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 val parser = Jwkt.parser(codec)
     .verifyWith(JwsAlgorithms.HS256, secret)
     .requireIssuer("https://example.com")
     .requireAudience("api")
     .requireClaim("tenant", "acme")
-    .clockSkew(Duration.ofSeconds(30))
+    .clockSkew(30.seconds)
     .build()
 
 val jwt = parser.parse(token)
@@ -246,10 +247,13 @@ resolver 收到的是未经验证的 header，不能直接信任其中的任意�
 ## 有效期与时钟
 
 ```kotlin
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+
 val parser = Jwkt.parser(codec)
     .verifyWith(JwsAlgorithms.HS256, secret)
-    .clock(Clock.systemUTC())          // 默认
-    .clockSkew(Duration.ofSeconds(30)) // 允许 30 秒偏差
+    .clock(Clock.System)          // 默认
+    .clockSkew(30.seconds)        // 允许 30 秒偏差
     .build()
 ```
 

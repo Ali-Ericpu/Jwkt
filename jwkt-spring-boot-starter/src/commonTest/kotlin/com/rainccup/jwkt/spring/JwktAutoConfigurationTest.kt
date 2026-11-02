@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.autoconfigure.AutoConfigurations
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import java.util.function.Supplier
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class JwktAutoConfigurationTest {
 
@@ -55,6 +57,22 @@ class JwktAutoConfigurationTest {
                 assertThat(jwt.claims["tenant"]).isEqualTo("acme")
                 assertThat(jwt.claims.expiration).isNotNull()
                 assertThat(jwt.claims.issuedAt).isNotNull()
+            }
+    }
+
+    @Test
+    fun `binds Kotlin duration properties`() {
+        runner()
+            .withPropertyValues(
+                "jwkt.secret=$secret",
+                "jwkt.clock-skew=30s",
+                "jwkt.expires-in=2m",
+            )
+            .run { context ->
+                assertThat(context).hasNotFailed()
+                val properties = context.getBean(JwktProperties::class.java)
+                assertThat(properties.clockSkew).isEqualTo(30.seconds)
+                assertThat(properties.expiresIn).isEqualTo(2.minutes)
             }
     }
 

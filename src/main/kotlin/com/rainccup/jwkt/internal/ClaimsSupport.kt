@@ -1,10 +1,8 @@
 package com.rainccup.jwkt.internal
 
 import com.rainccup.jwkt.JwtException
-import java.math.BigDecimal
 import java.math.RoundingMode
-import java.time.DateTimeException
-import java.time.Instant
+import kotlin.time.Instant
 
 internal const val CLAIM_ISSUER = "iss"
 internal const val CLAIM_SUBJECT = "sub"
@@ -28,9 +26,8 @@ internal fun numericDate(name: String, value: Any?): Instant? {
     if (value !is Number) {
         throw JwtException.InvalidClaims("JWT claim '$name' must be a number")
     }
-
     val decimal = try {
-        BigDecimal(value.toString())
+        value.toString().toBigDecimal()
     } catch (e: NumberFormatException) {
         throw JwtException.InvalidClaims("JWT claim '$name' is not a finite number", e)
     }
@@ -41,7 +38,7 @@ internal fun numericDate(name: String, value: Any?): Instant? {
         throw JwtException.InvalidClaims("JWT claim '$name' is outside the supported range", e)
     }
 
-    val fraction = decimal.subtract(BigDecimal.valueOf(seconds))
+    val fraction = decimal.subtract(seconds.toBigDecimal())
     val nanos = try {
         fraction.movePointRight(9)
             .setScale(0, RoundingMode.DOWN)
@@ -51,8 +48,8 @@ internal fun numericDate(name: String, value: Any?): Instant? {
     }
 
     return try {
-        Instant.ofEpochSecond(seconds, nanos)
-    } catch (e: DateTimeException) {
+        Instant.fromEpochSeconds(seconds, nanos)
+    } catch (e: IllegalArgumentException) {
         throw JwtException.InvalidClaims(
             "JWT claim '$name' is outside the supported Instant range",
             e,

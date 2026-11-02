@@ -6,9 +6,9 @@ import com.rainccup.jwkt.internal.CLAIM_ISSUER
 import com.rainccup.jwkt.internal.CLAIM_SUBJECT
 import com.rainccup.jwkt.internal.Encoding
 import java.math.BigDecimal
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 private const val DEFAULT_MAX_TOKEN_LENGTH = 16 * 1024
 
@@ -35,7 +35,7 @@ public class JwtParserBuilder internal constructor() {
     private var codec: JsonCodec? = null
     private var keyResolver: JwsKeyResolver? = null
     private val verificationKeys: MutableMap<String, JwsVerificationKey> = LinkedHashMap()
-    private var clock: Clock = Clock.systemUTC()
+    private var clock: Clock = Clock.System
     private var clockSkew: Duration = Duration.ZERO
     private var maxTokenLength: Int = DEFAULT_MAX_TOKEN_LENGTH
     private var requireExpiration: Boolean = false
@@ -62,7 +62,7 @@ public class JwtParserBuilder internal constructor() {
      * The value must be zero or positive.
      */
     public fun clockSkew(skew: Duration): JwtParserBuilder = apply {
-        require(!skew.isNegative) { "Clock skew must not be negative" }
+        require(!skew.isNegative()) { "Clock skew must not be negative" }
         clockSkew = skew
     }
 
@@ -383,17 +383,14 @@ public class JwtParser internal constructor(
 
     private fun selectVerifier(header: JwtHeader): JwsVerificationKey {
         val static = verificationKeys[header.algorithm]
-        val selected = if (static != null) {
-            static
-        } else {
-            try {
+        val selected = static
+            ?: try {
                 keyResolver?.resolve(header)
             } catch (e: JwtException) {
                 throw e
             } catch (e: Exception) {
                 throw JwtException.VerificationException("JWT key resolver failed", e)
-            }
-        } ?: throw JwtException.UnsupportedAlgorithm(header.algorithm)
+            } ?: throw JwtException.UnsupportedAlgorithm(header.algorithm)
 
         if (selected.algorithm.name != header.algorithm) {
             throw JwtException.AlgorithmMismatch(
@@ -406,18 +403,18 @@ public class JwtParser internal constructor(
 
     private fun validate(jwt: Jwt) {
         val claims = jwt.claims
-        val now = clock.instant()
+        val now = clock.now()
 
         val expiration = claims.expiration
         if (requireExpiration && expiration == null) {
             throw JwtException.MissingClaim(CLAIM_EXPIRATION)
         }
-        if (expiration != null && !now.isBefore(expiration.plus(clockSkew))) {
+        if (expiration != null && now >= expiration.plus(clockSkew)) {
             throw JwtException.ExpiredToken(expiration, now)
         }
 
         val notBefore = claims.notBefore
-        if (notBefore != null && now.plus(clockSkew).isBefore(notBefore)) {
+        if (notBefore != null && now.plus(clockSkew) < notBefore) {
             throw JwtException.NotYetValidToken(notBefore, now)
         }
 
@@ -473,8 +470,8 @@ public class JwtParser internal constructor(
             return decimal(expected).compareTo(decimal(actual)) == 0
         }
         if (expected is Instant) {
-            val timestamp = BigDecimal.valueOf(expected.epochSecond)
-                .add(BigDecimal.valueOf(expected.nano.toLong()).movePointLeft(9))
+            val timestamp = BigDecimal.valueOf(expected.epochSeconds)
+                .add(expected.nanosecondsOfSecond.toBigDecimal().movePointLeft(9))
             if (actual is Number) {
                 return timestamp.compareTo(decimal(actual)) == 0
             }
@@ -487,7 +484,7 @@ public class JwtParser internal constructor(
 
     private fun decimal(number: Number): BigDecimal =
         try {
-            BigDecimal(number.toString())
+            number.toString().toBigDecimal()
         } catch (e: NumberFormatException) {
             throw JwtException.InvalidClaims("JWT claim value is not a finite number", e)
         }

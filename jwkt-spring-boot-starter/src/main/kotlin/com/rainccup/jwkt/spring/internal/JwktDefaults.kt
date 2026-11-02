@@ -2,7 +2,7 @@ package com.rainccup.jwkt.spring.internal
 
 import com.rainccup.jwkt.JwtException
 import com.rainccup.jwkt.spring.JwktProperties
-import java.time.Duration
+import kotlin.time.Duration
 
 /** Immutable snapshot of the token defaults from [JwktProperties]. */
 internal class JwktDefaults private constructor(
@@ -39,10 +39,10 @@ internal class JwktDefaults private constructor(
                     throw JwtException.ConfigurationException("jwkt.key-id must not be blank")
                 }
             }
-            if (properties.clockSkew.isNegative) {
+            if (properties.clockSkew.isNegative()) {
                 throw JwtException.ConfigurationException("jwkt.clock-skew must not be negative")
             }
-            if (properties.expiresIn.isNegative) {
+            if (properties.expiresIn.isNegative()) {
                 throw JwtException.ConfigurationException("jwkt.expires-in must not be negative")
             }
 

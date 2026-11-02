@@ -2,7 +2,8 @@ package com.rainccup.jwkt.spring
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.core.io.Resource
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 /**
  * Configuration properties for the JWKT Spring Boot starter.
@@ -53,8 +54,29 @@ public class JwktProperties {
     /** Allowed clock skew for `exp` and `nbf`. */
     public var clockSkew: Duration = Duration.ZERO
 
+    /**
+     * JavaBean accessor used by Spring Boot's configuration binder.
+     *
+     * Kotlin's inline [Duration] getter has a mangled JVM name, so this String accessor keeps
+     * `jwkt.clock-skew` bindable without relying on Java time types.
+     */
+    public fun getClockSkew(): String = clockSkew.toString()
+
+    /** JavaBean accessor used by Spring Boot's configuration binder. */
+    public fun setClockSkew(value: String) {
+        clockSkew = parseDuration("jwkt.clock-skew", value)
+    }
+
     /** Default lifetime applied by [JwktSigner]; individual tokens can override it. */
-    public var expiresIn: Duration = Duration.ofMinutes(15)
+    public var expiresIn: Duration = 15.minutes
+
+    /** JavaBean accessor used by Spring Boot's configuration binder. */
+    public fun getExpiresIn(): String = expiresIn.toString()
+
+    /** JavaBean accessor used by Spring Boot's configuration binder. */
+    public fun setExpiresIn(value: String) {
+        expiresIn = parseDuration("jwkt.expires-in", value)
+    }
 
     /** Whether [JwktSigner] adds `iat` automatically. */
     public var includeIssuedAt: Boolean = true
@@ -79,4 +101,14 @@ public class JwktProperties {
             "includeIssuedAt=$includeIssuedAt, requireExpiration=$requireExpiration, " +
             "headerNames=${headers.keys}, " +
             "claimNames=${claims.keys}, requiredClaims=$requiredClaims)"
+
+    private fun parseDuration(property: String, value: String): Duration =
+        try {
+            Duration.parse(value.trim())
+        } catch (e: IllegalArgumentException) {
+            throw IllegalArgumentException(
+                "$property must be a Kotlin duration such as '30s' or 'PT15M'",
+                e,
+            )
+        }
 }

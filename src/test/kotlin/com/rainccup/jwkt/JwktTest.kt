@@ -13,11 +13,10 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.MessageDigest
 import java.security.spec.ECGenParameterSpec
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneOffset
 import java.util.Base64
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 import javax.crypto.spec.SecretKeySpec
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -36,7 +35,7 @@ class JwktTest {
 
     @Test
     fun `round trips a signed token with registered and custom claims`() {
-        val expiration = now.plusSeconds(300)
+        val expiration = now.plus(300.seconds)
         val token = Jwkt.builder(codec)
             .clock(fixedClock(now))
             .issuer("https://issuer.example")
@@ -44,7 +43,7 @@ class JwktTest {
             .audience("api", "web")
             .jwtId("token-1")
             .issuedAt(now)
-            .notBefore(now.minusSeconds(5))
+            .notBefore(now.minus(5.seconds))
             .expiresAt(expiration)
             .keyId("key-1")
             .header("tenant", "acme")
@@ -73,7 +72,7 @@ class JwktTest {
         assertEquals(listOf("api", "web"), jwt.claims.audience)
         assertEquals(expiration, jwt.claims.expiration)
         assertEquals(now, jwt.claims.issuedAt)
-        assertEquals(now.minusSeconds(5), jwt.claims.notBefore)
+        assertEquals(now.minus(5.seconds), jwt.claims.notBefore)
         assertEquals("token-1", jwt.claims.jwtId)
         assertEquals("admin", jwt.claims["role"])
         assertEquals(mapOf("level" to 7), jwt.claims["nested"])
@@ -96,14 +95,14 @@ class JwktTest {
         )
 
         val jwt = Jwkt.parser(codec)
-            .clock(Clock.fixed(Instant.parse("2011-03-22T00:00:00Z"), ZoneOffset.UTC))
+            .clock(fixedClock(Instant.parse("2011-03-22T00:00:00Z")))
             .verifyWith(HS256, key)
             .build()
             .parse(token)
 
         assertEquals("joe", jwt.claims.issuer)
         assertEquals(true, jwt.claims["http://example.com/is_root"])
-        assertEquals(Instant.ofEpochSecond(1_300_819_380), jwt.claims.expiration)
+        assertEquals(Instant.fromEpochSeconds(1_300_819_380), jwt.claims.expiration)
     }
 
     @Test
@@ -113,7 +112,7 @@ class JwktTest {
             .issuer("issuer")
             .subject("subject")
             .claim("admin", true)
-            .expiresAt(now.plusSeconds(60))
+            .expiresAt(now.plus(60.seconds))
             .signWith(HS256, secret)
             .compact()
 
@@ -425,7 +424,7 @@ class JwktTest {
 
     @Test
     fun `requireClaim compares numbers numerically and instants as epoch seconds`() {
-        val expiration = Instant.ofEpochSecond(Instant.now().epochSecond + 3_600)
+        val expiration = Instant.fromEpochSeconds(Clock.System.now().epochSeconds + 3_600)
         val token = Jwkt.builder(codec)
             .claim("count", 1)
             .claim("exp", expiration)
@@ -476,7 +475,7 @@ class JwktTest {
 
         val lenient = Jwkt.parser(codec)
             .clock(fixedClock(now))
-            .clockSkew(Duration.ofSeconds(1))
+            .clockSkew(1.seconds)
             .verifyWith(HS256, secret)
             .build()
         assertEquals(now, lenient.parse(token).claims.expiration)
@@ -507,7 +506,7 @@ class JwktTest {
     @Test
     fun `validates not before with clock skew`() {
         val token = Jwkt.builder(codec)
-            .notBefore(now.plusSeconds(10))
+            .notBefore(now.plus(10.seconds))
             .signWith(HS256, secret)
             .compact()
 
@@ -518,12 +517,12 @@ class JwktTest {
         val notYetValid = assertThrows(JwtException.NotYetValidToken::class.java) {
             strict.parse(token)
         }
-        assertEquals(now.plusSeconds(10), notYetValid.notBefore)
+        assertEquals(now.plus(10.seconds), notYetValid.notBefore)
         assertEquals(now, notYetValid.now)
 
         val lenient = Jwkt.parser(codec)
             .clock(fixedClock(now))
-            .clockSkew(Duration.ofSeconds(10))
+            .clockSkew(10.seconds)
             .verifyWith(HS256, secret)
             .build()
         assertNotNull(lenient.parse(token).claims.notBefore)
@@ -567,8 +566,9 @@ class JwktTest {
         assertEquals("y", jwt.header["x"])
     }
 
-    private fun fixedClock(instant: Instant): Clock =
-        Clock.fixed(instant, ZoneOffset.UTC)
+    private fun fixedClock(instant: Instant): Clock = object : Clock {
+        override fun now(): Instant = instant
+    }
 
     private fun generateRsaKeyPair(): KeyPair =
         KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }.generateKeyPair()
