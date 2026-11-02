@@ -12,7 +12,6 @@ import com.rainccup.jwkt.internal.isNumericDateClaim
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.util.Collections
 
 /**
  * Fluent builder for a signed JWT.
@@ -123,7 +122,7 @@ public class JwtBuilder internal constructor() {
         audiences.forEach { require(it.isNotBlank()) { "Audience must not be blank" } }
         claimValues[CLAIM_AUDIENCE] = when (audiences.size) {
             1 -> audiences.first()
-            else -> Collections.unmodifiableList(audiences.toList())
+            else -> audiences.toList()
         }
     }
 

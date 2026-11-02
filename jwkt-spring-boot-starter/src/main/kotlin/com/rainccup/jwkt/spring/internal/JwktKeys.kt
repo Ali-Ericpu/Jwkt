@@ -18,7 +18,7 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
-import java.util.Base64
+import kotlin.io.encoding.Base64
 
 /** The selected algorithm and the keys available for signing and/or verification. */
 public class JwktKeyMaterial internal constructor(
@@ -34,6 +34,9 @@ public class JwktKeyMaterial internal constructor(
 }
 
 internal object JwktKeys {
+
+    private val standardBase64: Base64 = Base64.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL)
+    private val urlSafeBase64: Base64 = Base64.UrlSafe.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL)
 
     fun create(properties: JwktProperties, algorithms: List<JwsAlgorithm>): JwktKeyMaterial {
         val name = properties.algorithm.trim()
@@ -192,10 +195,10 @@ internal object JwktKeys {
             throw JwtException.ConfigurationException("jwkt.secret-base64 must not be blank")
         }
         return try {
-            Base64.getDecoder().decode(compact)
+            standardBase64.decode(compact)
         } catch (_: IllegalArgumentException) {
             try {
-                Base64.getUrlDecoder().decode(compact)
+                urlSafeBase64.decode(compact)
             } catch (url: IllegalArgumentException) {
                 throw JwtException.ConfigurationException(
                     "jwkt.secret-base64 is not valid standard or URL-safe Base64",
@@ -210,6 +213,7 @@ internal object PemKeys {
 
     private val PEM_PATTERN =
         Regex("-----BEGIN ([A-Z0-9 ]+)-----([\\s\\S]*?)-----END \\1-----")
+    private val BASE64 = Base64.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL)
 
     fun readPrivateKey(resource: Resource, keyAlgorithm: String, propertyName: String): PrivateKey {
         val label = "PRIVATE KEY"
@@ -293,7 +297,7 @@ internal object PemKeys {
 
         val body = match.groupValues[2].replace(Regex("\\s"), "")
         return try {
-            Base64.getDecoder().decode(body)
+            BASE64.decode(body)
         } catch (e: IllegalArgumentException) {
             throw JwtException.ConfigurationException(
                 "$propertyName contains invalid Base64 in its PEM body",

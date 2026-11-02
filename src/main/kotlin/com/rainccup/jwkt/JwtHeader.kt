@@ -1,7 +1,5 @@
 package com.rainccup.jwkt
 
-import java.util.Collections
-
 /**
  * A decoded JOSE protected header.
  *
@@ -9,7 +7,7 @@ import java.util.Collections
  */
 public class JwtHeader internal constructor(values: Map<String, Any?>) {
 
-    private val data: Map<String, Any?> = Collections.unmodifiableMap(LinkedHashMap(values))
+    private val data: Map<String, Any?> = values.toMap()
 
     /** All protected header parameters, including the registered ones. */
     public val values: Map<String, Any?> = data
@@ -71,21 +69,21 @@ public class JwtHeader internal constructor(values: Map<String, Any?>) {
         if (value !is Iterable<*>) {
             throw JwtException.InvalidHeader("JWT header 'crit' must be an array of strings")
         }
-        val result = ArrayList<String>()
-        for (item in value) {
-            if (item !is String || item.isBlank()) {
-                throw JwtException.InvalidHeader(
-                    "JWT header 'crit' must contain only non-blank strings",
-                )
+        return buildList {
+            for (item in value) {
+                if (item !is String || item.isBlank()) {
+                    throw JwtException.InvalidHeader(
+                        "JWT header 'crit' must contain only non-blank strings",
+                    )
+                }
+                if (item in this) {
+                    throw JwtException.InvalidHeader(
+                        "JWT header 'crit' contains duplicate entry '$item'",
+                    )
+                }
+                add(item)
             }
-            if (item in result) {
-                throw JwtException.InvalidHeader(
-                    "JWT header 'crit' contains duplicate entry '$item'",
-                )
-            }
-            result += item
         }
-        return Collections.unmodifiableList(result)
     }
 
     private fun parsePayloadEncoding(): Boolean {

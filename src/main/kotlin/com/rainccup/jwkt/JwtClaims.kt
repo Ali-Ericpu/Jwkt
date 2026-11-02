@@ -9,7 +9,6 @@ import com.rainccup.jwkt.internal.CLAIM_NOT_BEFORE
 import com.rainccup.jwkt.internal.CLAIM_SUBJECT
 import com.rainccup.jwkt.internal.numericDate
 import java.time.Instant
-import java.util.Collections
 
 /**
  * The decoded JWT payload.
@@ -25,7 +24,7 @@ public class JwtClaims internal constructor(
     private val codec: JsonCodec,
 ) {
 
-    private val data: Map<String, Any?> = Collections.unmodifiableMap(LinkedHashMap(values))
+    private val data: Map<String, Any?> = values.toMap()
 
     /** All payload claims. */
     public val values: Map<String, Any?> = data
@@ -116,15 +115,15 @@ public class JwtClaims internal constructor(
             )
         }
 
-        val result = ArrayList<String>()
-        for (item in value) {
-            if (item !is String) {
-                throw JwtException.InvalidClaims(
-                    "JWT claim '$CLAIM_AUDIENCE' must contain only strings",
-                )
+        return buildList {
+            for (item in value) {
+                if (item !is String) {
+                    throw JwtException.InvalidClaims(
+                        "JWT claim '$CLAIM_AUDIENCE' must contain only strings",
+                    )
+                }
+                add(item)
             }
-            result += item
         }
-        return Collections.unmodifiableList(result)
     }
 }

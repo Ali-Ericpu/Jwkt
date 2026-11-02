@@ -9,7 +9,6 @@ import java.math.BigDecimal
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.util.Collections
 
 private const val DEFAULT_MAX_TOKEN_LENGTH = 16 * 1024
 
@@ -155,7 +154,7 @@ public class JwtParserBuilder internal constructor() {
         )
         return JwtParser(
             codec = codec,
-            verificationKeys = Collections.unmodifiableMap(LinkedHashMap(verificationKeys)),
+            verificationKeys = verificationKeys.toMap(),
             keyResolver = keyResolver,
             clock = clock,
             clockSkew = clockSkew,
@@ -163,10 +162,10 @@ public class JwtParserBuilder internal constructor() {
             requireExpiration = requireExpiration,
             requiredIssuer = requiredIssuer,
             requiredSubject = requiredSubject,
-            requiredAudiences = Collections.unmodifiableSet(LinkedHashSet(requiredAudiences)),
-            requiredClaimNames = Collections.unmodifiableSet(LinkedHashSet(requiredClaimNames)),
-            requiredClaimValues = Collections.unmodifiableMap(LinkedHashMap(requiredClaimValues)),
-            validators = Collections.unmodifiableList(ArrayList(validators)),
+            requiredAudiences = requiredAudiences.toSet(),
+            requiredClaimNames = requiredClaimNames.toSet(),
+            requiredClaimValues = requiredClaimValues.toMap(),
+            validators = validators.toList(),
         )
     }
 

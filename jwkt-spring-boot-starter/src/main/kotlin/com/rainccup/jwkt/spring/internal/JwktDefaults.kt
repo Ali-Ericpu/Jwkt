@@ -3,7 +3,6 @@ package com.rainccup.jwkt.spring.internal
 import com.rainccup.jwkt.JwtException
 import com.rainccup.jwkt.spring.JwktProperties
 import java.time.Duration
-import java.util.Collections
 
 /** Immutable snapshot of the token defaults from [JwktProperties]. */
 internal class JwktDefaults private constructor(
@@ -84,12 +83,12 @@ internal class JwktDefaults private constructor(
 
             return JwktDefaults(
                 issuer = issuer,
-                audience = Collections.unmodifiableList(audience),
+                audience = audience.toList(),
                 keyId = keyId,
                 expiresIn = properties.expiresIn,
                 includeIssuedAt = properties.includeIssuedAt,
-                headers = Collections.unmodifiableMap(headers),
-                claims = Collections.unmodifiableMap(claims),
+                headers = headers.toMap(),
+                claims = claims.toMap(),
             )
         }
     }
